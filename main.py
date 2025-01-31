@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends, Security
+from fastapi import Request
 
 from pydantic import BaseModel, HttpUrl, Field
 from typing import Optional, List, Dict, Any, Union
