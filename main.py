@@ -506,7 +506,28 @@ async def crawl_direct(request: CrawlRequest) -> Dict[str, Any]:
     except Exception as e:
         logger.error(f"Error in direct crawl: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+        
+@app.post("/webhook/run-crawler")
+async def run_crawler_webhook(request: Request):
+    """
+    Webhook to run crawler on a dynamic URL.
+    """
+    try:
+        data = await request.json()
+        target_url = data.get("url", "https://openai.com/api/pricing/")
 
+        async with AsyncWebCrawler() as crawler:
+            result = await crawler.arun(
+                url=target_url,
+                js_code=["navigator.webdriver = undefined;"],
+                wait_for="body",
+            )
+            logger.info("Crawler Result:\n%s", result.markdown)
+            return {"status": "completed", "result": result.markdown}
+
+    except Exception as e:
+        logger.error(f"Error running crawler: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 @app.get("/health")
 async def health_check():
