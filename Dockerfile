@@ -123,11 +123,12 @@ RUN pip install --no-cache-dir \
 RUN mkdocs build
 
 # Install Playwright and browsers
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ]; then \
-    playwright install chromium; \
-    elif [ "$TARGETPLATFORM" = "linux/arm64" ]; then \
-    playwright install chromium; \
-    fi
+# Install Playwright and browsers with dependencies
+RUN pip install playwright && playwright install --with-deps
+
+# Set correct permissions for Playwright
+RUN chmod -R 755 /root/.cache/ms-playwright
+
 
 # Expose port
 EXPOSE 8000 11235 9222 8080
